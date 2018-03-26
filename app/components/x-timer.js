@@ -9,18 +9,28 @@ export default Component.extend({
 
 	init () {
 		this._super(...arguments);
-		let ms = this.get('ms')
-		let saved = (new Date).getTime() + ms;
-		this.set('saved', saved);
 		this.send('reset');
 	},
+
 	tick () {
 		let time = this.get('saved') - (new Date).getTime();
 		this.set('time', moment(time).utc());
+
+		if (time <= 0) {
+			this.set('time', 0);
+			this.send('stop');
+			this.onFinish();
+		}
+
 		later(() => {
 			if (this.get('isRunning')) this.tick();
-		});
+		});			
 	},
+
+	onFinish () {
+		// Completed | Override me!
+	},
+
 	actions: {
 		start () {
 			this.set('isRunning', true);
@@ -30,9 +40,11 @@ export default Component.extend({
 			this.set('isRunning', false);
 		},
 		reset () {
-			let ms = this.get('ms');
-			this.set('isRunning', false);
+			let ms = this.get('ms')
+			let saved = (new Date).getTime() + ms;
+			this.set('saved', saved);
 			this.set('time', moment(ms).utc());
+			this.set('isRunning', false);
 		}
 	}
 });

@@ -3,8 +3,16 @@ import { computed } from '@ember/object';
 
 export default Controller.extend({
 	time: null,
-	ms: 240000,
+	ms: 180000,
 	final: computed('time', 'ms', function () {
-		return this.get('ms') - this.get('time');
-	})
+		let ms = this.get('ms');
+		let time = this.get('time');
+		console.log(ms, time)
+		return ms - time;
+	}),
+	actions: {
+		onFinish () {
+			// ...
+		}
+ 	}
 });
