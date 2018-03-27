@@ -33,6 +33,7 @@ export default Component.extend({
 
 	actions: {
 		start () {
+			this.send('reset');
 			this.set('isRunning', true);
 			this.tick();
 		},
