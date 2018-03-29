@@ -7,12 +7,11 @@ export default Controller.extend({
 	final: computed('time', 'ms', function () {
 		let ms = this.get('ms');
 		let time = this.get('time');
-		console.log(ms, time)
 		return ms - time;
 	}),
 	actions: {
 		onFinish () {
-			// ...
+			// console.log('finished');
 		}
- 	}
+	}
 });

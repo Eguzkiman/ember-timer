@@ -1,51 +1,60 @@
 import Component from '@ember/component';
-import moment from 'moment';
 import { later } from '@ember/runloop';
 
 export default Component.extend({
-	time: null,
-	isRunning: false,
-	ms: 180000,
+	timerSize: 1800,
+	isTicking: false,
 
 	init () {
 		this._super(...arguments);
-		this.send('reset');
+		let timerSize = this.get('timerSize');
+		this.set('time', timerSize);
+		this.set('currentSize', timerSize);
 	},
 
 	tick () {
-		let time = this.get('saved') - (new Date).getTime();
-		this.set('time', moment(time).utc());
+		if (!this.get('isTicking')) return;
 
-		if (time <= 0) {
-			this.set('time', 0);
-			this.send('stop');
+		let now = Date.now();
+		let startedAt = this.get('startedAt');
+		let currentSize = this.get('currentSize');
+
+		let timePassed = startedAt + currentSize - now;
+
+		if (timePassed <= 0) {
+			timePassed = 0;
+			this.set('isTicking', false);
 			this.onFinish();
 		}
 
-		later(() => {
-			if (this.get('isRunning')) this.tick();
-		});			
+		this.set('time', timePassed);
+
+
+		later(() => this.tick());
 	},
 
 	onFinish () {
-		// Completed | Override me!
+		// Override me
 	},
 
 	actions: {
 		start () {
-			this.send('reset');
-			this.set('isRunning', true);
+			let startedAt = Date.now();
+			this.set('startedAt', startedAt);
+			this.set('isTicking', true);
 			this.tick();
 		},
+
 		stop () {
-			this.set('isRunning', false);
+			this.set('isTicking', false);
+			this.set('currentSize', this.get('time'));
 		},
+
 		reset () {
-			let ms = this.get('ms')
-			let saved = (new Date).getTime() + ms;
-			this.set('saved', saved);
-			this.set('time', moment(ms).utc());
-			this.set('isRunning', false);
+			this.set('isTicking', false);
+			let timerSize = this.get('timerSize');
+			this.set('time', timerSize);
+			this.set('currentSize', timerSize);;
 		}
 	}
 });
