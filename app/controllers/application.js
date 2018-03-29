@@ -2,7 +2,7 @@ import Controller from '@ember/controller';
 import { computed } from '@ember/object';
 
 export default Controller.extend({
-	time: null,
+	time: 180000,
 	ms: 180000,
 	final: computed('time', 'ms', function () {
 		let ms = this.get('ms');
@@ -11,7 +11,7 @@ export default Controller.extend({
 	}),
 	actions: {
 		onFinish () {
-			// console.log('finished');
+			alert("finished!")
 		}
 	}
 });
